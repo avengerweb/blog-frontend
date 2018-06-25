@@ -1,64 +1,33 @@
 <template>
   <section class="container">
-    <div>
-      <app-logo/>
-      <h1 class="title">
-        aven-blog
-      </h1>
-      <h2 class="subtitle">
-        AvengerWeb.com blog
-      </h2>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          class="button--green">Documentation</a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          class="button--grey">GitHub</a>
-      </div>
+    <div class="post" v-for="post in posts" :key="post.id">
+      {{ post.title }}
+      <router-link :to="{name: 'posts-slug', params: { slug: post.slug }}">
+        More
+      </router-link>
     </div>
   </section>
 </template>
 
 <script>
-import AppLogo from '~/components/AppLogo.vue'
-
 export default {
-  components: {
-    AppLogo
-  }
+  data() {
+    return {
+      pagination: {
+        page: 1
+      }
+    };
+  },
+  computed: {
+    posts() {
+      return this.page ? this.page.data : [];
+    },
+    page() {
+      return this.$store.state.Posts.pages.find(p => p.current_page === this.pagination.page);
+    }
+  },
+  async fetch({ store }) {
+    return store.dispatch('Posts/loadPosts');
+  },
 }
 </script>
-
-<style>
-.container {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.title {
-  font-family: "Quicksand", "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; /* 1 */
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
-}
-</style>
